@@ -3,7 +3,9 @@ import hashlib
 import zlib
 
 from blob import compute_SHA_256,compress_byte_data
-OBJECTS_DIR="objects"
+OBJECTS_DIR="GIT/objects"
+
+
 #<mode> <filename>\0<20-byte SHA-1 hash of object>
 #sha256().digest() → a 32-byte raw binary value
 
@@ -77,7 +79,7 @@ def add_tree_header(folder_path=None):
             tree_body+=i
     tree_header=f"tree {len(tree_body)}\0"
     tree_header_byte=tree_header.encode()
-    print(tree_header_byte)
+    # print(tree_header_byte)
     tree_object=tree_header_byte+tree_body
     return tree_object
 

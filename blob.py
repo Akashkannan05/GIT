@@ -5,7 +5,7 @@ import zlib
 
 
 BASE_DIR = 'documents'
-OBJECTS_DIR="objects"
+OBJECTS_DIR="GIT/objects"
 
 file_content=None
 
