@@ -27,8 +27,7 @@ def parent_commit(folder_path=None):
     else:
         parent_hash="No parent"
     # print(HEAD_DIR)
-    with open(HEAD_DIR,"w") as f:
-        f.write(hash)
+    
     return tree_body,parent_hash
     
 #STEP3: Add Author and Committer Metadata
@@ -46,7 +45,12 @@ def add_author_committer_metadata():
     if commiter_info.get("name") is None or commiter_info.get("email") is None:
         print("Commiter details is not filled.........")
         return None
-    commiter=f"author {commiter_info.get('name')} {commiter_info.get('email')} {int(time.time())} {time.strftime('%z')}" #{time.strftime('%z')}=>Local time
+    commiter=f"commiter {commiter_info.get('name')} {commiter_info.get('email')} {int(time.time())} {time.strftime('%z')}" #{time.strftime('%z')}=>Local time
+    print(f"Author name: {repr(author_info.get('name'))}")
+    print(f"Author email: {repr(author_info.get('email'))}")
+    print(f"Committer name: {repr(commiter_info.get('name'))}")
+    print(f"Committer email: {repr(commiter_info.get('email'))}")
+
     return author,commiter
 
 #STEP4:Combine All Components (Commit Body)
@@ -63,22 +67,22 @@ def body(folder_path=None,commit_msg=None):
         print("Something went wrong in add_author_committer_metadata...........")
         return None
     if parent_hash!="No parent":
-        body=f"""
-            {tree_body}
-            {parent_hash}
-            {author}
-            {commiter}
-            \n
-            {commit_msg}
-            """
+        body = (
+            f"{tree_body}\n"
+            f"{parent_hash}\n"
+            f"{author}\n"
+            f"{commiter}\n"
+            f"\n"
+            f"{commit_msg}"
+        )
     else:
-        body=f"""
-            {tree_body}
-            {author}
-            {commiter}
-            \n
-            {commit_msg}
-            """
+        body = (
+            f"{tree_body}\n"
+            f"{author}\n"
+            f"{commiter}\n"
+            f"\n"
+            f"{commit_msg}"
+        )
     print( body)
     return body
 
@@ -87,18 +91,27 @@ def hash_compree_build(folder_path=None,commit_msg=None):
     if commit_body is None:
         print('somthing went wrong in the body()................')
         return None
-    commit_body_byte=commit_body.encode()
-    commit_header=f"commit {len(commit_body)}\0"
-    commit_header_byte=commit_header.encode()
-    commit=commit_header_byte+commit_body_byte
+    commit_body_byte=commit_body.encode('utf-8')
+    commit_header=f"commit {len(commit_body_byte)}\0"
+    commit_header_byte=commit_header.encode('utf-8')
+    commit = commit_header_byte + commit_body_byte
+    print("--------------",commit.decode())
     hash_object=hashlib.sha256()
     hash_object.update(commit)
     commit_hash=hash_object.hexdigest()
     commit_compress=zlib.compress(commit)
+    # print(commit_compress)
+    print("******************")
+    print(commit == zlib.decompress(commit_compress))
 
     folder_path=os.path.join(OBJECTS_DIR,commit_hash[:2])
     os.makedirs(folder_path, exist_ok=True)
     file_path=os.path.join(folder_path,commit_hash[2:])
     with open(file_path,"wb") as f:
         f.write(commit_compress)
+    with open(file_path,"rb") as f:
+        check=f.read()
+    print(check == commit_compress)
     print(f"The commit file is created at {file_path}")
+    with open(HEAD_DIR,"w") as f:
+        f.write(commit_hash)

@@ -37,7 +37,7 @@ def traverse_folder(folder_path=None):
             folders.append(sub_folder_path)
             dictioanry={
                 "name":sub_folder_path.split('/')[-1],
-                "type":"file",
+                "type":"tree",
                 "hash":store_tree(sub_folder_path)
             }
             output.append(dictioanry)
