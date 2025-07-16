@@ -74,26 +74,52 @@ def load_latest_commits_tree():
         })
         index=index+32
     # print(tree)
+    # return tree
+    # print(tree)
+    for i in tree:
+        if i["mode"]=="40000":
+            # print("-------->",i)
+            folder_path=os.path.join(DOCUMENT_DIR,i["fileName"])
+            # print(";;;;;;;;;;;;;;;;;;;;;",folder_path)
+            tree.extend(scan_the_working_directory(folder_path))
+            tree.remove(i)
+    # print("TREE:",tree)
     return tree
 
+
 #Step 2: Scan the Working Directory
-def scan_the_working_directory(folder_path=None):
+def scan_the_working_directory(folder_path=None, relative_path=""):
     if folder_path is None or not os.path.exists(folder_path):
         print("Give the proper directory")
+        return None
+    # print("@@@@@@@@@@@@",folder_path)
     files=os.listdir(folder_path)
-    # print(files)
-    latest_commit=load_latest_commits_tree()
     current_files=[]
+    # print("==============>",files,folder_path)
+    # print(files)
     for file_name in files:
-        file_path=os.path.join(DOCUMENT_DIR,file_name)
-        if os.path.isfile(file_path):
+        # print("FILE_NAME:",file_name)
+        full_path = os.path.join(folder_path, file_name)
+        rel_path = os.path.join(relative_path, file_name)
+        # print("FILE_PATH:",file_path)
+        if os.path.isfile(full_path):
             dictionary={
                 'mode':'100644',
-                'fileName':file_name,
-                'hash':compute_SHA_256(file_path).hexdigest()
+                'fileName':rel_path,
+                'hash':compute_SHA_256(full_path).hexdigest()
             }
             current_files.append(dictionary)
+        elif os.path.isdir(full_path):
+            current_files.extend(scan_the_working_directory(full_path, rel_path))
+    # print("CURRENT_FILES@:",current_files)
+    return current_files
+# Step 3: Compare Current State vs Commit Snapshot
+def compare(folder_path=None):
     # print(current_files)
+    latest_commit=load_latest_commits_tree()
+    current_files=scan_the_working_directory(folder_path)
+    print("LATEST_COMMIT:",latest_commit,"\n")
+    print("CURRENT_FILES:",current_files,'\n')
     file_names=[]
     for dictionary in latest_commit:
         file_names.append(dictionary['fileName'])
