@@ -1,5 +1,6 @@
 import os
 import zlib
+import shutil
 
 from status import parse_tree_object
 BASE_PATH=os.getcwd()
@@ -114,7 +115,7 @@ def clear_working_directory(exclude_dirs=None):
         if os.path.isfile(item_path):
             os.remove(item_path)
         elif os.path.isdir(item_path):
-            import shutil
+            
             shutil.rmtree(item_path)
 
 # Main checkout function
