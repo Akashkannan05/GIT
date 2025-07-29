@@ -79,4 +79,4 @@ Feel free to reach out if you have any questions or suggestions:
 📧 [akash2005k26kaniyur12@gmail.com](mailto:akash2005k26kaniyur12@gmail.com)
 
 
->NOTE:The README.md file was created by the chatgpt not others
+>NOTE:The README.md file and few steps in checkout.py was created by the chatgpt not any other that is also due to lack of time
