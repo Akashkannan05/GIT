@@ -106,7 +106,7 @@ def restore_blob(blob_hash, output_path):
 # Step 5 (Optional): Clear current working directory before checkout
 def clear_working_directory(exclude_dirs=None):
     if exclude_dirs is None:
-        exclude_dirs = ['GIT']  # do not delete .git directory
+        exclude_dirs = ['.git']  # do not delete .git directory
     
     for item in os.listdir(BASE_PATH):
         if item in exclude_dirs:
